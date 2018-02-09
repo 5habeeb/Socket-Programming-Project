@@ -6,7 +6,7 @@ public class TCPClient {
     
     public static String askServer(String hostname, int port, String ToServer) throws  IOException {
         // create a socket
-        Socket clientSocket = new Socket(InetAddress.getLocalHost(), port);
+        Socket clientSocket = new Socket(hostname, port);
         clientSocket.setSoTimeout(5000);
         String result = null;
 
@@ -28,7 +28,6 @@ public class TCPClient {
              String line;
              StringBuilder resultBuilder = new StringBuilder("");
              while((line = inFromServer.readLine()) != null ){
-                 System.out.println("debugging");
                  if(line.isEmpty())
                      resultBuilder.append("\n");
                  else

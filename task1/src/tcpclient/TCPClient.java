@@ -6,7 +6,7 @@ public class TCPClient {
     
     public static String askServer(String hostname, int port, String ToServer) throws  IOException {
         // create a socket
-        Socket clientSocket = new Socket(hostname, port);
+        Socket clientSocket = new Socket(InetAddress.getLocalHost(), port);
         clientSocket.setSoTimeout(5000);
         String result = null;
 
@@ -28,6 +28,7 @@ public class TCPClient {
              String line;
              StringBuilder resultBuilder = new StringBuilder("");
              while((line = inFromServer.readLine()) != null ){
+                 System.out.println("debugging");
                  if(line.isEmpty())
                      resultBuilder.append("\n");
                  else
@@ -55,9 +56,7 @@ public class TCPClient {
     }
 
     public static String askServer(String hostname, int port) throws  IOException {
-        // this function is never used by the TCPAsk class
-        // have the same code except for writing to the server
-        return null;
+        return askServer (hostname, port, null);
     }
 }
 

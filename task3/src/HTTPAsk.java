@@ -3,21 +3,21 @@ import java.io.*;
 
 public class HTTPAsk {
     private static ServerSocket server;
-    private static int port;
+    private static int ServerPort;
 
     public static void main( String[] args) {
-        port = Integer.parseInt(args[0]);
+        ServerPort = Integer.parseInt(args[0]);
 
         try {
-            server = new ServerSocket(port);
-            System.out.println("server is running \t waiting for connection...");
+            server = new ServerSocket(ServerPort);
         } catch (IOException e) {
-            System.out.println("Cannot listen to port " + port);
+            System.out.println("Cannot listen to port " + ServerPort);
             e.printStackTrace();
         }
 
         while (true) {
             String httpResponse;
+            String errorMsg = "Error: ";
             String hostname = null;
             String port = null;
             String string = null;
@@ -26,18 +26,18 @@ public class HTTPAsk {
             try {
                 // Accept and establish a connection with a client
                 Socket connectionSocket;
+                System.out.println("Listening on port " + ServerPort);
                 connectionSocket = server.accept();
                 System.out.println("Got a connection");
 
                 // Get the data from the client
                 BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 
-                String line = inFromClient.readLine();
+                String line = inFromClient.readLine() + "";
                 String header = line;
-                StringBuilder resultBuilder = new StringBuilder("");
+
                 while (!line.isEmpty()) {
-                    resultBuilder.append(line).append("\r\n");
-                    line = inFromClient.readLine();
+                    line = inFromClient.readLine() + "";
                 }
 
                 // the string could miss any of the characters used for splitting
@@ -70,22 +70,28 @@ public class HTTPAsk {
                         }
                     }
                     else {
+                        errorMsg += "The requested method does not exist or parameters are missing";
                         error = true;
                     }
                 }catch(RuntimeException e)
                     {
-                        System.out.println("normal error");
-                        httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + "Error: \n the requested method does not exist";
+                        errorMsg += "The format of the request is fault";
+                        error = true;
                     }
 
+                String TCPClientResponse = null;
+                try{
+                    if(!error)
+                        {TCPClientResponse = TCPClient.askServer(hostname,Integer.parseInt(port),string);}
+                } catch (IOException e){
+                    errorMsg += "Invalid arguments";
+                    error = true;
+                }
 
                 if(error){
-                    httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + "Error: \n the requested method does not exist";
+                    httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + errorMsg;
                 }
                 else{
-                    String TCPClientResponse = TCPClient.askServer(hostname,Integer.parseInt(port),string);
-                    System.out.println("method response: " + TCPClientResponse);
-
                     // generate the HTTP response
                     httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + TCPClientResponse;
                 }
@@ -93,15 +99,12 @@ public class HTTPAsk {
                 PrintWriter outToClient = new PrintWriter(connectionSocket.getOutputStream(), true);
                 outToClient.println(httpResponse);
 
-                System.out.println("Sent to client: " + httpResponse);
-
                 //close connection
                 connectionSocket.close();
                 System.out.println("connection closed");
 
             } catch (IOException e) {
-                System.err.println("Error.");
-                System.exit(1);
+                System.err.println("Error");
             }
 
         }

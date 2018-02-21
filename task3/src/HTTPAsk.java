@@ -88,11 +88,13 @@ public class HTTPAsk {
                     error = true;
                 }
 
+
+                // generate the HTTP response
                 if(error){
                     httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + errorMsg;
                 }
                 else{
-                    // generate the HTTP response
+
                     httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + TCPClientResponse;
                 }
 
@@ -108,8 +110,6 @@ public class HTTPAsk {
             }
 
         }
-
-
     }
 }
 

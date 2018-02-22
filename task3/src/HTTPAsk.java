@@ -78,12 +78,12 @@ public class HTTPAsk {
                 }catch(RuntimeException e)
                     {
                         errorMsg += "The format of the request is fault";
-                        error404 = true;
+                        error400 = true;
                     }
 
                 String TCPClientResponse = null;
                 try{
-                    if(!error404)
+                    if(!error400 && !error404)
                         {TCPClientResponse = TCPClient.askServer(hostname,Integer.parseInt(port),string);}
                 } catch (IOException e){
                     errorMsg += "Invalid arguments";

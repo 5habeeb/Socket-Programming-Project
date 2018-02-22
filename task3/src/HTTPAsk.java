@@ -21,7 +21,8 @@ public class HTTPAsk {
             String hostname = null;
             String port = null;
             String string = null;
-            boolean error = false;
+            boolean error400 = false;
+            boolean error404 = false;
 
             try {
                 // Accept and establish a connection with a client
@@ -32,6 +33,7 @@ public class HTTPAsk {
 
                 // Get the data from the client
                 BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+                System.out.println("start to read");
 
                 String line = inFromClient.readLine() + "";
                 String header = line;
@@ -71,27 +73,30 @@ public class HTTPAsk {
                     }
                     else {
                         errorMsg += "The requested method does not exist or parameters are missing";
-                        error = true;
+                        error404 = true;
                     }
                 }catch(RuntimeException e)
                     {
                         errorMsg += "The format of the request is fault";
-                        error = true;
+                        error404 = true;
                     }
 
                 String TCPClientResponse = null;
                 try{
-                    if(!error)
+                    if(!error404)
                         {TCPClientResponse = TCPClient.askServer(hostname,Integer.parseInt(port),string);}
                 } catch (IOException e){
                     errorMsg += "Invalid arguments";
-                    error = true;
+                    error400 = true;
                 }
 
 
                 // generate the HTTP response
-                if(error){
-                    httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + errorMsg;
+                if(error400){
+                    httpResponse = "HTTP/1.1 400 bad request\r\n\r\n" + errorMsg;
+                }
+                else if (error404){
+                    httpResponse = "HTTP/1.1 404 not found\r\n\r\n" + errorMsg;
                 }
                 else{
 

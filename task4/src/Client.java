@@ -23,9 +23,7 @@ public class Client {
             output.println(packetTosend);
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String received = input.readLine();
-            while(received != null){
-                System.out.println("coming from server: " + received );
-            }
+            System.out.println("coming from server: " + received );
 
         } catch (IOException e) {
             e.printStackTrace();

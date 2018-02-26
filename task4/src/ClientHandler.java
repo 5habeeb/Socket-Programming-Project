@@ -12,22 +12,15 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        int i = 0;
-
             try {
                 input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 output= new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
 
                 String line = input.readLine() + " ";
-                while(true){
-                    System.out.println(line + ++i);
-                    output.println(line + ++i);
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                System.out.println(line);
+                output.println(line);
+                clientSocket.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

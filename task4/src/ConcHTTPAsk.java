@@ -8,7 +8,6 @@ public class ConcHTTPAsk {
     public static void main (String[] args ){
         port = args[0];
         ConcHTTPAsk server = new ConcHTTPAsk();
-        System.out.println("here");
         server.init();
     }
 
@@ -30,7 +29,6 @@ public class ConcHTTPAsk {
     private void startConnection(Socket link) {
         ClientHandler handler = new ClientHandler(link);
         Thread threadHandler = new Thread(handler);
-        System.out.println("calling thread handler");
         threadHandler.start();
     }
 }
